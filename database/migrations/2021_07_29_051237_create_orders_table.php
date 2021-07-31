@@ -17,12 +17,12 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('customer_id');
             $table->integer('driver_id')->nullable();
-            $table->decimal('pickup_lat');
-            $table->decimal('pickup_long');
-            $table->decimal('destination_lat');
-            $table->decimal('destination_long');
+            $table->decimal('pickup_lat', 10, 7);
+            $table->decimal('pickup_long', 10, 7);
+            $table->decimal('destination_lat', 10, 7);
+            $table->decimal('destination_long', 10, 7);
             $table->integer('fee')->default(0);
-            $table->text('status')->default('available');
+            $table->text('status')->default('process');
             $table->timestamps();
 
             // foreign key

@@ -29,13 +29,13 @@ class OrderController extends Controller
 
 
     // driver melihat daftar order yang tersedia
-    public function available(){
+    public function check(){
         $user = $this->authUser();
 
         if($user->role == 'penumpang')
             return response()->json(['message' => 'hanya driver yang dapat melihat dafftar order yang tersedia']);
         else{
-            $orders = \App\Order::select('*')->where('status', '=', 'available')->get();
+            $orders = \App\Order::select('*')->where('status', '=', 'process')->where('driver_id', null)->get();
 
             return $orders;
         }
@@ -51,8 +51,7 @@ class OrderController extends Controller
         else{
             $order_id = $request->order_id;
             $order = \App\Order::where('id', $order_id)->update([
-                'driver_id' => $user->id,
-                'status' => 'process'
+                'driver_id' => $user->id
             ]);
 
             if($order == 1)

@@ -35,6 +35,6 @@ Route::group([
     Route::post('/create', [OrderController::class, 'store']);
     Route::post('/accept', [OrderController::class, 'accept']);
     Route::post('/pickup', [OrderController::class, 'pickup']);
-    Route::get('/available', [OrderController::class, 'available']);
+    Route::get('/check', [OrderController::class, 'check']);
     Route::get('/dashboard', [OrderController::class, 'dashboard']);
 });
