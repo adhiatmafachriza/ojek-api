@@ -52,7 +52,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string|confirmed',
             'phone' => 'required|string|min:11',
-            'role' => 'required|string',
+            'role' => 'required|string|in:penumpang,driver',
             'nomor_kendaraan' => 'string|max:10|regex:/^[A-Z]{1,2}\s{1}\d{1,4}\s{1}[A-Z]{1,3}$/'
         ]);
 
