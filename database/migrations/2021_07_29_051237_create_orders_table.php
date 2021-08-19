@@ -16,13 +16,15 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('customer_id');
+            $table->text('customer_name');
             $table->integer('driver_id')->nullable();
             $table->decimal('pickup_lat', 10, 7);
             $table->decimal('pickup_long', 10, 7);
             $table->decimal('destination_lat', 10, 7);
             $table->decimal('destination_long', 10, 7);
+            $table->text('destination_address');
             $table->integer('fee')->default(0);
-            $table->text('status')->default('process');
+            $table->enum('status', ['process', 'done', 'canceled'])->default('process');
             $table->timestamps();
 
             // foreign key

@@ -33,8 +33,11 @@ Route::group([
     'prefix' => 'order'
 ], function($router){
     Route::post('/create', [OrderController::class, 'store']);
-    Route::post('/accept', [OrderController::class, 'accept']);
     Route::post('/pickup', [OrderController::class, 'pickup']);
+    Route::post('/done', [OrderController::class, 'done']);
+    Route::post('/cancel', [OrderController::class, 'cancel']);
+    Route::post('/driver', [OrderController::class, 'driver']);
     Route::get('/check', [OrderController::class, 'check']);
     Route::get('/dashboard', [OrderController::class, 'dashboard']);
+    Route::get('/current', [OrderController::class, 'current']);
 });
