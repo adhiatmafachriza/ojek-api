@@ -38,7 +38,22 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->createNewToken($token);
+        // return $this->createNewToken($token);
+
+        \App\User::where('id', auth()->user()->id)->update(['uuid' => $request->uuid]);
+        $uuid = \App\User::where('id', auth()->user()->id)->first('uuid');
+
+        return response()->json([
+            'access_token' => $token,
+            'user' => [
+                'id' => auth()->user()->id,
+                'name' => auth()->user()->email,
+                'phone' => auth()->user()->phone,
+                'role' => auth()->user()->role,
+                'nomor_kendaraan' => auth()->user()->nomor_kendaraan,
+                'uuid' => $uuid->uuid
+            ]
+        ]);
     }
 
     /**

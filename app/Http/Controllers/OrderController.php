@@ -41,12 +41,13 @@ class OrderController extends Controller
 
             // jika driver masih punya order yang masih berlangsung maka tampilkan hanya order yang sedang berlangsung
             if($current_order > 0){
-                $order = \App\Order::where('driver_id', '=', $user->id)->where('status', '=', 'process')->first();
+                $order = \App\Order::select('orders.*', 'users.uuid')->join('users', 'users.id', '=', 'orders.customer_id')->where('status', '=', 'process')->where('driver_id', $user->id)->first();
+                
                 return $order;
             }
             // jika tidak tampilkan semua order yang tersedia
             else{
-                $orders = \App\Order::select('*')->where('status', '=', 'process')->where('driver_id', null)->get();
+                $orders = \App\Order::select('orders.*', 'users.uuid')->join('users', 'users.id', '=', 'orders.customer_id')->where('status', '=', 'process')->where('driver_id', null)->get();
                 
                 return $orders;
             }

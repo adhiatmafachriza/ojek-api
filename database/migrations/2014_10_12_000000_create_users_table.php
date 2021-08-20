@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->enum('role', ['penumpang', 'driver']);
             $table->char('nomor_kendaraan', 10)->nullable();
+            $table->string('uuid')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
