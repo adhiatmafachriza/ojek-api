@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     // customer membuat order
-    public function store(Request $request){
+    public function create(Request $request){
         $user = $this->authUser();
 
         if($user->role == 'driver')
@@ -25,7 +25,12 @@ class OrderController extends Controller
                 'destination_address' =>$request->destination_address
             ]);
     
-            return $order;
+            $uuid_list = \App\User::where('role', 'driver')->pluck('uuid');
+            
+            return response()->json([
+                'order' => $order,
+                'driver_uuid' => $uuid_list
+            ]);
         }
     }
 
@@ -37,20 +42,9 @@ class OrderController extends Controller
         if($user->role == 'penumpang')
             return response()->json(['message' => 'hanya driver yang dapat melihat dafftar order yang tersedia']);
         else{
-            $current_order = \App\Order::where('driver_id', '=', $user->id)->where('status', '=', 'process')->get()->count();
-
-            // jika driver masih punya order yang masih berlangsung maka tampilkan hanya order yang sedang berlangsung
-            if($current_order > 0){
-                $order = \App\Order::select('orders.*', 'users.uuid')->join('users', 'users.id', '=', 'orders.customer_id')->where('status', '=', 'process')->where('driver_id', $user->id)->first();
+            $orders = \App\Order::select('orders.*', 'users.uuid as customer_uuid')->join('users', 'users.id', '=', 'orders.customer_id')->where('status', '=', 'process')->where('driver_id', null)->get();
                 
-                return $order;
-            }
-            // jika tidak tampilkan semua order yang tersedia
-            else{
-                $orders = \App\Order::select('orders.*', 'users.uuid')->join('users', 'users.id', '=', 'orders.customer_id')->where('status', '=', 'process')->where('driver_id', null)->get();
-                
-                return $orders;
-            }
+            return $orders;
         }
     }
 
@@ -95,7 +89,12 @@ class OrderController extends Controller
             return response()->json(['message' => 'hanya driver yang dapat mengakses menu ini']);
         }
         else{
-            $order = \App\Order::where('driver_id', '=', $user->id)->where('status', '=', 'process')->first();
+            // $order = \App\Order::where('driver_id', '=', $user->id)->where('status', '=', 'process')->first();
+            $order = \App\Order::select('orders.*', 'users.uuid as customer_uuid')->join('users', 'users.id', '=', 'orders.customer_id')->where('status', '=', 'process')->where('driver_id', $user->id)->first();
+
+            if($order == null){
+                return response()->json(['message' => 'Anda tidak punya order yang sedang berlangsung'], 201);
+            }
 
             return $order;
         }
@@ -165,27 +164,16 @@ class OrderController extends Controller
     }
 
     // data driver yang menjemput pesanan
-    public function driver(Request $request){
+    public function driver(){
         $user = $this->authUser();
 
         if($user->role == 'driver'){
             return response()->json(['message' => 'menu ini hanya dapat diakses oleh penumpang']);
         }
         else{
-            $driver_id = \App\Order::where('id', $request->order_id)->first()->driver_id;
+            $driver_order = \App\Order::select('users.id', 'users.name', 'users.nomor_kendaraan', 'orders.fee')->join('users', 'users.id', '=', 'orders.driver_id')->where('orders.customer_id', $user->id)->first();
 
-            if($driver_id == null){
-                return response()->json(['message' => 'belum ada driver yang menerima pesanan ini']);
-            }
-            else{
-                $driver = \App\User::where('id', $driver_id)->first();
-
-                return response()->json([
-                    'nama' => $driver->name,
-                    'nomor telfon' => $driver->phone,
-                    'nomor kendaraan' => $driver->nomor_kendaraan 
-                ]);
-            }
+            return $driver_order;
         }
     }
 }
