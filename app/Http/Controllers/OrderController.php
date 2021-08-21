@@ -171,9 +171,12 @@ class OrderController extends Controller
             return response()->json(['message' => 'menu ini hanya dapat diakses oleh penumpang']);
         }
         else{
-            $driver_order = \App\Order::select('users.id', 'users.name', 'users.nomor_kendaraan', 'orders.fee')->join('users', 'users.id', '=', 'orders.driver_id')->where('orders.customer_id', $user->id)->first();
-
-            return $driver_order;
+            $driver_order = \App\Order::select('users.id', 'users.name', 'users.nomor_kendaraan', 'orders.fee')->join('users', 'users.id', '=', 'orders.driver_id')->where('orders.customer_id', $user->id)->where('orders.status', 'process')->first();
+            
+            if($driver_order == null)
+                return response()->json(['message' => 'Belum ada driver yang menjemput pesanan Anda'], 201);
+            else
+                return $driver_order;
         }
     }
 }
