@@ -72,7 +72,6 @@ class OrderController extends Controller
                 $order_data = \App\Order::where('id', $order_id)->first();
 
                 if($order == 1)
-                    // return response()->json(['message' => 'order berhasil diproses']);
                     return $order_data;
                 else
                     return response()->json(['message' => 'order gagal diproses']);
@@ -89,7 +88,6 @@ class OrderController extends Controller
             return response()->json(['message' => 'hanya driver yang dapat mengakses menu ini']);
         }
         else{
-            // $order = \App\Order::where('driver_id', '=', $user->id)->where('status', '=', 'process')->first();
             $order = \App\Order::select('orders.*', 'users.uuid as customer_uuid')->join('users', 'users.id', '=', 'orders.customer_id')->where('status', '=', 'process')->where('driver_id', $user->id)->first();
 
             if($order == null){
@@ -171,7 +169,7 @@ class OrderController extends Controller
             return response()->json(['message' => 'menu ini hanya dapat diakses oleh penumpang']);
         }
         else{
-            $driver_order = \App\Order::select('users.id', 'users.name', 'users.nomor_kendaraan', 'orders.fee')->join('users', 'users.id', '=', 'orders.driver_id')->where('orders.customer_id', $user->id)->where('orders.status', 'process')->first();
+            $driver_order = \App\Order::select('users.id', 'users.name', 'users.phone', 'users.nomor_kendaraan', 'orders.fee')->join('users', 'users.id', '=', 'orders.driver_id')->where('orders.customer_id', $user->id)->where('orders.status', 'process')->first();
             
             if($driver_order == null)
                 return response()->json(['message' => 'Belum ada driver yang menjemput pesanan Anda'], 201);
